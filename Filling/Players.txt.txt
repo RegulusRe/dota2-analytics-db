@@ -1,0 +1,16 @@
+player_id	name	nickname	position	team_id
+1	Magomed Khalilov	Collapse	Offlane	1
+2	Ilia Mulyarchuk	Yatoro	Carry	1
+3	Miroslaw Kolpakov	Mira	Mid	1
+4	Yaroslav Naidenov	Miposhka	Support	1
+5	Torontok	TORONTOTOKYO	Support	1
+6	Marc Polo Luis	Saksa	Offlane	2
+7	Martin Sazdov	Sneyking	Carry	2
+8	Ammar Al-Assaf	ATF	Mid	2
+9	Nikola Kovač	LeBron	Support	2
+10	Kim Oanh	Skem	Support	2
+11	Aydin Sarkohi	iNSaNiA	Support	3
+12	Maximilian Baier	qojqva	Carry	3
+13	Luca Höllein	Boxi	Mid	3
+14	Sebastien Debs	Ceb	Offlane	3
+15	Jake Hookey	Saksa	Support	3

@@ -1,0 +1,16 @@
+hero_id	name	role	ultimate
+1	Anti-Mage	Carry	Mana Void
+2	Axe	Offlane	Call of the Wild
+3	Bane	Support	Fiend's Grip
+4	Bloodseeker	Mid	Rupture
+5	Crystal Maiden	Support	Freezing Field
+6	Drow Ranger	Carry	Marksmanship
+7	Earthshaker	Support	Echo Slam
+8	Juggernaut	Carry	Omnislash
+9	Lich	Support	Chain Frost
+10	Lina	Mid	Laguna Blade
+11	Lion	Support	Finger of Death
+12	Mirana	Support	Moonlight Shadow
+13	Pudge	Offlane	Dismember
+14	Shadow Fiend	Mid	Requiem of Souls
+15	Sniper	Carry	Assassinate
