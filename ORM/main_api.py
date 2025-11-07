@@ -22,9 +22,6 @@ class PlayerBase(BaseModel):
     position: str
     team_id: int
 
-class PlayerCreate(PlayerBase):
-    pass
-
 class PlayerUpdate(BaseModel):
     nickname: Optional[str] = None
 
@@ -38,12 +35,6 @@ class PlayerResponse(PlayerBase):
 class TeamBase(BaseModel):
     name: str
 
-class TeamCreate(TeamBase):
-    pass
-
-class TeamUpdate(TeamBase):
-    pass
-
 class TeamResponse(TeamBase):
     team_id: int
 
@@ -56,12 +47,6 @@ class HeroBase(BaseModel):
     name: str
     role: str
     ultimate: str
-
-class HeroCreate(HeroBase):
-    pass
-
-class HeroUpdate(HeroBase):
-    pass
 
 class HeroResponse(HeroBase):
     hero_id: int
@@ -77,11 +62,6 @@ class TournamentBase(BaseModel):
     end_date: Optional[date] = None
     winner: Optional[str] = None
 
-class TournamentCreate(TournamentBase):
-    pass
-
-class TournamentUpdate(TournamentBase):
-    pass
 
 class TournamentResponse(TournamentBase):
     tournament_id: int
@@ -98,11 +78,6 @@ class MatchBase(BaseModel):
     team_dire: int
     winner_id: int
 
-class MatchCreate(MatchBase):
-    pass
-
-class MatchUpdate(MatchBase):
-    pass
 
 class MatchResponse(MatchBase):
     match_id: int
@@ -123,8 +98,6 @@ class StatisticBase(BaseModel):
     roshan_kills: int = 0
     towers_kills: int = 0
 
-class StatisticCreate(StatisticBase):
-    pass
 
 class StatisticUpdate(BaseModel):
     kills: Optional[int] = None
@@ -392,4 +365,5 @@ def api_delete_statistic(stat_id: int, db: Session = Depends(get_db)):
     success = delete_statistics_record(db, stat_id)
     if not success:
         raise HTTPException(status_code=404, detail="Статистику не знайдено")
+
     return {"detail": "Статистику видалено"}
