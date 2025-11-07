@@ -1,0 +1,16 @@
+tournament_id	name	start_date	end_date	winner
+1	The International 2023	2023-10-12	2023-10-29	Team Spirit
+2	ESL One Birmingham 2023	2023-08-01	2023-08-07	Gaimin Gladiators
+3	DreamLeague Season 21	2023-09-01	2023-09-15	Team Liquid
+4	FISSURE Universe Episode 6	2023-07-01	2023-07-05	Execration
+5	BetBoom DOTA 2 Invitational	2023-06-10	2023-06-18	Talon Esports
+6	Gaimin Gladiators Invitational	2023-05-20	2023-05-25	Gaimin Gladiators
+7	WePlay AniMajor 2023	2023-04-01	2023-04-10	Tundra Esports
+8	EPICENTER 2023	2023-03-15	2023-03-20	Team Secret
+9	BLAST Dota 2 Showdown	2023-02-10	2023-02-15	Azure Ray
+10	StarLadder ImbaTV Minor	2023-01-20	2023-01-25	Shopify Rebellion
+11	Dota PIT Season 10	2022-12-01	2022-12-08	Team Spirit
+12	WePlay Pushka League S3	2022-11-10	2022-11-15	Team Liquid
+13	ESL One Berlin 2022	2022-10-05	2022-10-09	OG
+14	DreamLeague Season 20	2022-09-20	2022-09-25	Tundra Esports
+15	The International 2022	2022-10-15	2022-10-30	Tundra Esports

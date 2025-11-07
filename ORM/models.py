@@ -1,8 +1,6 @@
-# models.py
-
 from sqlalchemy import Column, Integer, BigInteger, String, Date, ForeignKey, Boolean, DECIMAL
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 
 class Tournaments(Base):
     __tablename__ = "Tournaments"

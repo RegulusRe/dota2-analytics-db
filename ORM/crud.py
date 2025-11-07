@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import Players, Teams, Heroes, Statistics, Tournaments, Series, Matches, Prizes
+from .models import Players, Teams, Heroes, Statistics, Tournaments, Series, Matches, Prizes
 from typing import List, Optional
 from datetime import date
 # ====================== CREATE ======================
@@ -161,6 +161,59 @@ def get_series(db: Session, series_id: int) -> Optional[Series]:
 
 def get_all_statistics(db: Session, skip: int = 0, limit: int = 100) -> List[Statistics]:
     return db.query(Statistics).offset(skip).limit(limit).all()
+
+
+def get_series_by_tournament(db: Session, tournament_id: int) -> List[Series]:
+    """Отримати всі серії для конкретного турніру"""
+    return db.query(Series).filter(Series.tournament_id == tournament_id).all()
+
+
+def create_series(db: Session, tournament_id: int, team1_id: int, team2_id: int) -> Series:
+    """Створити серію у вказаному турнірі"""
+    db_series = Series(tournament_id=tournament_id, team1_id=team1_id, team2_id=team2_id)
+    db.add(db_series)
+    db.commit()
+    db.refresh(db_series)
+    return db_series
+
+
+def get_matches_by_series(db: Session, series_id: int) -> List[Matches]:
+    """Отримати всі матчі для конкретної серії"""
+    return db.query(Matches).filter(Matches.series_id == series_id).all()
+
+
+def get_players_by_team(db: Session, team_id: int) -> List[Players]:
+    """Отримати всіх гравців для конкретної команди"""
+    return db.query(Players).filter(Players.team_id == team_id).all()
+
+
+def get_prizes_by_team(db: Session, team_id: int) -> List[Prizes]:
+    """Отримати всі призи для конкретної команди"""
+    return db.query(Prizes).filter(Prizes.team_id == team_id).all()
+
+
+def create_prize(db: Session, team_id: int, tournament_id: int, amount: float, position: int) -> Prizes:
+    """Створити запис про приз для команди"""
+    db_prize = Prizes(team_id=team_id, tournament_id=tournament_id, amount=amount, place=position)
+    db.add(db_prize)
+    db.commit()
+    db.refresh(db_prize)
+    return db_prize
+
+
+def get_player_statistics_records(db: Session, player_id: int) -> List[Statistics]:
+    """Отримати всі записи статистики для гравця"""
+    return db.query(Statistics).filter(Statistics.player_id == player_id).all()
+
+
+def get_match_statistics_records(db: Session, match_id: int) -> List[Statistics]:
+    """Отримати всі записи статистики для матчу"""
+    return db.query(Statistics).filter(Statistics.match_id == match_id).all()
+
+
+def get_hero_statistics_records(db: Session, hero_id: int) -> List[Statistics]:
+    """Отримати всі записи статистики для героя"""
+    return db.query(Statistics).filter(Statistics.hero_id == hero_id).all()
 
 # ====================== Додаткові функції для CREATE ======================
 
