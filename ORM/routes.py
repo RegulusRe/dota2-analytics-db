@@ -6,6 +6,9 @@ from .models import *
 from .schemas import *
 from .controllers import *
 from .crud import *
+from .auth.routes import router as auth_router
+# Валідатори (розкоментуйте коли потрібно використовувати)
+# from .validation import validate_team_exists, validate_unique_team_name, validate_series_teams, etc.
 
 # Створюємо роутери для кожної основної сутності
 tournament_router = APIRouter(prefix="/tournaments", tags=["Tournaments"])
@@ -360,6 +363,7 @@ async def delete_match_global(match_id: int, db: Session = Depends(get_db)):
 # Функція для реєстрації всіх роутерів
 def include_routers(app):
     """Реєстрація всіх роутерів в додатку"""
+    app.include_router(auth_router)
     app.include_router(tournament_router)
     app.include_router(team_router)
     app.include_router(player_router)
