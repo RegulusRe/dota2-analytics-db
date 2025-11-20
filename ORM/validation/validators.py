@@ -3,7 +3,7 @@
 """
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from .models import Teams, Players, Heroes, Tournaments, Series, Matches
+from ORM.models import Teams, Players, Heroes, Tournaments, Series, Matches
 
 
 class ValidationError(HTTPException):
@@ -128,7 +128,7 @@ def validate_statistics_data(db: Session, player_id: int, match_id: int, hero_id
     validate_hero_exists(db, hero_id)
     
     # Перевірка чи немає дублікату статистики
-    from .models import Statistics
+    from ORM.models import Statistics
     existing = db.query(Statistics).filter(
         Statistics.player_id == player_id,
         Statistics.match_id == match_id
@@ -143,7 +143,7 @@ def validate_prize_data(db: Session, team_id: int, tournament_id: int, position:
     validate_tournament_exists(db, tournament_id)
     
     # Перевірка чи немає дублікату призу
-    from .models import Prizes
+    from ORM.models import Prizes
     existing = db.query(Prizes).filter(
         Prizes.tournament_id == tournament_id,
         Prizes.team_id == team_id
