@@ -1,4 +1,4 @@
-# Python
+# Python / bytecode
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,10 +6,19 @@ __pycache__/
 .Python
 
 # Virtual environments
+.venv/
 venv/
 env/
 ENV/
-.venv
+.python-version
+
+# Type checkers / linters / tooling
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytest_cache/
+.pdm-build/
+.ropeproject/
 
 # IDE
 .vscode/
@@ -18,18 +27,21 @@ ENV/
 *.swo
 *~
 
-# Testing
-.pytest_cache/
+# Testing / coverage
 .coverage
+.coverage.*
 htmlcov/
 *.cover
 .hypothesis/
 
-# Distribution / packaging
+# Packaging / build
 dist/
 build/
 *.egg-info/
 .eggs/
+
+# Jupyter
+.ipynb_checkpoints/
 
 # Logs
 *.log
@@ -42,6 +54,7 @@ build/
 # Environment variables
 .env
 .env.local
+.env.*
 
 # OS
 .DS_Store

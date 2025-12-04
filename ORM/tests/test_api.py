@@ -7,68 +7,68 @@ import pytest
 class TestTeamsAPI:
     """Тести API команд"""
     
-    def test_get_all_teams(self, client):
+    def test_get_all_teams(self, client, auth_headers):
         """Тест отримання всіх команд"""
-        response = client.get("/teams")
+        response = client.get("/teams", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
     
-    def test_create_team(self, client):
+    def test_create_team(self, client, auth_headers):
         """Тест створення команди"""
         team_data = {"name": "New Team"}
-        response = client.post("/teams", json=team_data)
+        response = client.post("/teams", json=team_data, headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["name"] == "New Team"
         assert "team_id" in data
     
-    def test_create_team_validation_error(self, client):
+    def test_create_team_validation_error(self, client, auth_headers):
         """Тест валідації при створенні команди"""
         team_data = {"name": "A"}  # Занадто коротка назва
-        response = client.post("/teams", json=team_data)
+        response = client.post("/teams", json=team_data, headers=auth_headers)
         assert response.status_code == 422
     
-    def test_get_team_by_id(self, client, sample_team):
+    def test_get_team_by_id(self, client, sample_team, auth_headers):
         """Тест отримання команди за ID"""
-        response = client.get(f"/teams/{sample_team.team_id}")
+        response = client.get(f"/teams/{sample_team.team_id}", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["team_id"] == sample_team.team_id
         assert data["name"] == sample_team.name
     
-    def test_get_team_not_found(self, client):
+    def test_get_team_not_found(self, client, auth_headers):
         """Тест отримання неіснуючої команди"""
-        response = client.get("/teams/99999")
+        response = client.get("/teams/99999", headers=auth_headers)
         assert response.status_code == 404
     
-    def test_update_team(self, client, sample_team):
+    def test_update_team(self, client, sample_team, auth_headers):
         """Тест оновлення команди"""
         update_data = {"name": "Updated Team"}
-        response = client.put(f"/teams/{sample_team.team_id}", json=update_data)
+        response = client.put(f"/teams/{sample_team.team_id}", json=update_data, headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["name"] == "Updated Team"
     
-    def test_delete_team(self, client, sample_team):
+    def test_delete_team(self, client, sample_team, auth_headers):
         """Тест видалення команди"""
-        response = client.delete(f"/teams/{sample_team.team_id}")
+        response = client.delete(f"/teams/{sample_team.team_id}", headers=auth_headers)
         assert response.status_code == 200
         
         # Перевірка що команда видалена
-        get_response = client.get(f"/teams/{sample_team.team_id}")
+        get_response = client.get(f"/teams/{sample_team.team_id}", headers=auth_headers)
         assert get_response.status_code == 404
 
 
 class TestPlayersAPI:
     """Тести API гравців"""
     
-    def test_get_all_players(self, client):
+    def test_get_all_players(self, client, auth_headers):
         """Тест отримання всіх гравців"""
-        response = client.get("/players")
+        response = client.get("/players", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
     
-    def test_create_player(self, client, sample_team):
+    def test_create_player(self, client, sample_team, auth_headers):
         """Тест створення гравця"""
         player_data = {
             "name": "John Doe",
@@ -76,14 +76,14 @@ class TestPlayersAPI:
             "position": "Carry",
             "team_id": sample_team.team_id
         }
-        response = client.post("/players", json=player_data)
+        response = client.post("/players", json=player_data, headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["name"] == "John Doe"
         assert data["nickname"] == "JD"
         assert "player_id" in data
     
-    def test_create_player_invalid_position(self, client, sample_team):
+    def test_create_player_invalid_position(self, client, sample_team, auth_headers):
         """Тест створення гравця з невалідною позицією"""
         player_data = {
             "name": "John Doe",
@@ -91,66 +91,66 @@ class TestPlayersAPI:
             "position": "InvalidPosition",
             "team_id": sample_team.team_id
         }
-        response = client.post("/players", json=player_data)
+        response = client.post("/players", json=player_data, headers=auth_headers)
         assert response.status_code == 422
     
-    def test_get_player_by_id(self, client, sample_player):
+    def test_get_player_by_id(self, client, sample_player, auth_headers):
         """Тест отримання гравця за ID"""
-        response = client.get(f"/players/{sample_player.player_id}")
+        response = client.get(f"/players/{sample_player.player_id}", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["player_id"] == sample_player.player_id
         assert data["name"] == sample_player.name
     
-    def test_update_player(self, client, sample_player):
+    def test_update_player(self, client, sample_player, auth_headers):
         """Тест оновлення гравця"""
         update_data = {"nickname": "NewNick"}
-        response = client.put(f"/players/{sample_player.player_id}", json=update_data)
+        response = client.put(f"/players/{sample_player.player_id}", json=update_data, headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["nickname"] == "NewNick"
     
-    def test_delete_player(self, client, sample_player):
+    def test_delete_player(self, client, sample_player, auth_headers):
         """Тест видалення гравця"""
-        response = client.delete(f"/players/{sample_player.player_id}")
+        response = client.delete(f"/players/{sample_player.player_id}", headers=auth_headers)
         assert response.status_code == 200
 
 
 class TestHeroesAPI:
     """Тести API героїв"""
     
-    def test_get_all_heroes(self, client):
+    def test_get_all_heroes(self, client, auth_headers):
         """Тест отримання всіх героїв"""
-        response = client.get("/heroes")
+        response = client.get("/heroes", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
     
-    def test_create_hero(self, client):
+    def test_create_hero(self, client, auth_headers):
         """Тест створення героя"""
         hero_data = {
             "name": "Pudge",
             "role": "Disabler",
             "ultimate": "Dismember"
         }
-        response = client.post("/heroes", json=hero_data)
+        response = client.post("/heroes", json=hero_data, headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["name"] == "Pudge"
         assert data["role"] == "Disabler"
     
-    def test_create_hero_invalid_role(self, client):
+    def test_create_hero_invalid_role(self, client, auth_headers):
         """Тест створення героя з невалідною роллю"""
         hero_data = {
             "name": "TestHero",
             "role": "InvalidRole",
             "ultimate": "Test Ultimate"
         }
-        response = client.post("/heroes", json=hero_data)
+        response = client.post("/heroes", json=hero_data, headers=auth_headers)
         assert response.status_code == 422
     
-    def test_get_hero_by_id(self, client, sample_hero):
+    def test_get_hero_by_id(self, client, sample_hero, auth_headers):
         """Тест отримання героя за ID"""
-        response = client.get(f"/heroes/{sample_hero.hero_id}")
+        response = client.get(f"/heroes/{sample_hero.hero_id}", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["hero_id"] == sample_hero.hero_id
@@ -159,37 +159,37 @@ class TestHeroesAPI:
 class TestTournamentsAPI:
     """Тести API турнірів"""
     
-    def test_get_all_tournaments(self, client):
+    def test_get_all_tournaments(self, client, auth_headers):
         """Тест отримання всіх турнірів"""
-        response = client.get("/tournaments")
+        response = client.get("/tournaments", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
     
-    def test_create_tournament(self, client):
+    def test_create_tournament(self, client, auth_headers):
         """Тест створення турніру"""
         tournament_data = {
             "name": "Test Tournament",
             "start_date": "2024-01-01",
             "end_date": "2024-01-10"
         }
-        response = client.post("/tournaments", json=tournament_data)
+        response = client.post("/tournaments", json=tournament_data, headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["name"] == "Test Tournament"
     
-    def test_create_tournament_invalid_dates(self, client):
+    def test_create_tournament_invalid_dates(self, client, auth_headers):
         """Тест створення турніру з невалідними датами"""
         tournament_data = {
             "name": "Test Tournament",
             "start_date": "2024-01-10",
             "end_date": "2024-01-01"  # End before start
         }
-        response = client.post("/tournaments", json=tournament_data)
+        response = client.post("/tournaments", json=tournament_data, headers=auth_headers)
         assert response.status_code == 422
     
-    def test_get_tournament_by_id(self, client, sample_tournament):
+    def test_get_tournament_by_id(self, client, sample_tournament, auth_headers):
         """Тест отримання турніру за ID"""
-        response = client.get(f"/tournaments/{sample_tournament.tournament_id}")
+        response = client.get(f"/tournaments/{sample_tournament.tournament_id}", headers=auth_headers)
         assert response.status_code == 200
         data = response.json()
         assert data["tournament_id"] == sample_tournament.tournament_id
@@ -259,7 +259,7 @@ class TestAuthAPI:
 class TestAPIValidation:
     """Тести валідації API"""
     
-    def test_create_series_same_teams(self, client, sample_tournament):
+    def test_create_series_same_teams(self, client, sample_tournament, auth_headers):
         """Тест створення серії з однаковими командами"""
         from ORM.models import Teams
         team = Teams(name="Solo Team")
@@ -271,11 +271,11 @@ class TestAPIValidation:
             "score_team1": 0,
             "score_team2": 0
         }
-        response = client.post("/series", json=series_data)
+        response = client.post("/series", json=series_data, headers=auth_headers)
         # Має бути помилка валідації
         assert response.status_code in [400, 422]
     
-    def test_statistics_invalid_kills(self, client, sample_player, sample_hero):
+    def test_statistics_invalid_kills(self, client, sample_player, sample_hero, auth_headers):
         """Тест створення статистики з невалідним числом вбивств"""
         stat_data = {
             "player_id": sample_player.player_id,
@@ -286,5 +286,5 @@ class TestAPIValidation:
             "assists": 10,
             "damage": 20000
         }
-        response = client.post("/statistics", json=stat_data)
+        response = client.post("/statistics", json=stat_data, headers=auth_headers)
         assert response.status_code == 422

@@ -41,12 +41,12 @@ class SeriesController:
         return get_series_by_tournament(db, tournament_id)
 
     @staticmethod
-    async def create(db: Session, tournament_id: int, series: SeriesBase) -> SeriesResponse:
-        tournament = get_tournament(db, tournament_id)
+    async def create(db: Session, series: SeriesBase) -> SeriesResponse:
+        tournament = get_tournament(db, series.tournament_id)
         BaseController.check_exists(tournament, "Турнір не знайдено")
         return create_series(
             db,
-            tournament_id,
+            series.tournament_id,
             series.team1_id,
             series.team2_id
         )
@@ -101,27 +101,37 @@ class TeamController:
 
 class PlayerController:
     @staticmethod
+    async def get_all(db: Session, skip: int = 0, limit: int = 100) -> List[PlayerResponse]:
+        return get_players(db, skip=skip, limit=limit)
+
+    @staticmethod
     async def get_by_team(db: Session, team_id: int) -> List[PlayerResponse]:
         team = get_team(db, team_id)
         BaseController.check_exists(team, "Команду не знайдено")
         return get_players_by_team(db, team_id)
 
     @staticmethod
-    async def create(db: Session, team_id: int, player: PlayerBase) -> PlayerResponse:
-        team = get_team(db, team_id)
+    async def create(db: Session, player: PlayerBase, team_id: Optional[int] = None) -> PlayerResponse:
+        """Створити гравця для вказаної команди (team_id з аргументу або з тіла)."""
+        target_team_id = team_id if team_id is not None else player.team_id
+        team = get_team(db, target_team_id)
         BaseController.check_exists(team, "Команду не знайдено")
         return create_player(
             db,
             player.name,
             player.nickname,
             player.position,
-            team_id
+            target_team_id
         )
 
 class HeroController:
     @staticmethod
     async def get_all(db: Session, skip: int = 0, limit: int = 100) -> List[HeroResponse]:
         return get_heroes(db, skip=skip, limit=limit)
+
+    @staticmethod
+    async def create(db: Session, hero: HeroBase) -> HeroResponse:
+        return create_hero(db, hero.name, hero.role, hero.ultimate)
 
     @staticmethod
     async def get_by_id(db: Session, hero_id: int) -> HeroResponse:

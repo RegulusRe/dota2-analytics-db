@@ -7,15 +7,18 @@ from .schemas import *
 from .controllers import *
 from .crud import *
 from .auth.routes import router as auth_router
+from .auth.security import get_current_user
 # Валідатори (розкоментуйте коли потрібно використовувати)
 # from .validation import validate_team_exists, validate_unique_team_name, validate_series_teams, etc.
 
 # Створюємо роутери для кожної основної сутності
-tournament_router = APIRouter(prefix="/tournaments", tags=["Tournaments"])
-team_router = APIRouter(prefix="/teams", tags=["Teams"])
-player_router = APIRouter(prefix="/players", tags=["Players"])
-hero_router = APIRouter(prefix="/heroes", tags=["Heroes"])
-match_router = APIRouter(prefix="/matches", tags=["Matches"])
+tournament_router = APIRouter(prefix="/tournaments", tags=["Tournaments"], dependencies=[Depends(get_current_user)])
+team_router = APIRouter(prefix="/teams", tags=["Teams"], dependencies=[Depends(get_current_user)])
+player_router = APIRouter(prefix="/players", tags=["Players"], dependencies=[Depends(get_current_user)])
+hero_router = APIRouter(prefix="/heroes", tags=["Heroes"], dependencies=[Depends(get_current_user)])
+match_router = APIRouter(prefix="/matches", tags=["Matches"], dependencies=[Depends(get_current_user)])
+series_router = APIRouter(prefix="/series", tags=["Series"], dependencies=[Depends(get_current_user)])
+statistics_router = APIRouter(prefix="/statistics", tags=["Statistics"], dependencies=[Depends(get_current_user)])
 
 # --------- Маршрути для турнірів ---------
 @tournament_router.get("/", response_model=List[TournamentResponse])
@@ -62,7 +65,10 @@ async def get_tournament_series(tournament_id: int, db: Session = Depends(get_db
 @tournament_router.post("/{tournament_id}/series", response_model=SeriesResponse)
 async def create_tournament_series(tournament_id: int, series: SeriesBase, db: Session = Depends(get_db)):
     """Створити нову серію в турнірі"""
-    return await SeriesController.create(db, tournament_id, series)
+    # Переконуємось, що в тілі та в URL однаковий турнір
+    if series.tournament_id != tournament_id:
+        raise HTTPException(status_code=400, detail="tournament_id в шляху і тілі мають співпадати")
+    return await SeriesController.create(db, series)
 
 
 @tournament_router.get("/{tournament_id}/series/{series_id}", response_model=SeriesResponse)
@@ -138,6 +144,31 @@ async def create_team(team: TeamBase, db: Session = Depends(get_db)):
     """Створити нову команду"""
     return await TeamController.create(db, team)
 
+@team_router.get("/{team_id}", response_model=TeamResponse)
+async def get_team_detail(team_id: int, db: Session = Depends(get_db)):
+    """Отримати команду за ID"""
+    return await TeamController.get_by_id(db, team_id)
+
+@team_router.put("/{team_id}", response_model=TeamResponse)
+async def update_team(team_id: int, team_update: TeamUpdate, db: Session = Depends(get_db)):
+    """Оновити команду"""
+    db_team = get_team(db, team_id)
+    if not db_team:
+        raise HTTPException(status_code=404, detail="Команду не знайдено")
+    for key, value in team_update.dict(exclude_unset=True).items():
+        setattr(db_team, key, value)
+    db.commit()
+    db.refresh(db_team)
+    return db_team
+
+@team_router.delete("/{team_id}")
+async def delete_team_endpoint(team_id: int, db: Session = Depends(get_db)):
+    """Видалити команду"""
+    success = delete_team(db, team_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Команду не знайдено")
+    return {"detail": "Команду видалено"}
+
 # Вкладені маршрути для гравців команди
 @team_router.get("/{team_id}/players", response_model=List[PlayerResponse])
 async def get_team_players(team_id: int, db: Session = Depends(get_db)):
@@ -147,7 +178,7 @@ async def get_team_players(team_id: int, db: Session = Depends(get_db)):
 @team_router.post("/{team_id}/players", response_model=PlayerResponse)
 async def add_team_player(team_id: int, player: PlayerBase, db: Session = Depends(get_db)):
     """Додати гравця до команди"""
-    return await PlayerController.create(db, team_id, player)
+    return await PlayerController.create(db, player, team_id)
 
 
 @player_router.post("/", response_model=PlayerResponse)
@@ -298,6 +329,20 @@ async def create_statistic(stat: StatisticBase, db: Session = Depends(get_db)):
     )
 
 
+# --------- Глобальні маршрути для серій ---------
+@series_router.post("/", response_model=SeriesResponse)
+async def create_series_global(series: SeriesBase, db: Session = Depends(get_db)):
+    """Створити серію (глобальний endpoint)"""
+    return await SeriesController.create(db, series)
+
+
+# --------- Глобальні маршрути для статистики ---------
+@statistics_router.post("/", response_model=StatisticResponse)
+async def create_stat_global(stat: StatisticBase, db: Session = Depends(get_db)):
+    """Створити запис статистики (глобальний endpoint)"""
+    return await StatisticsController.create(db, stat)
+
+
 @match_router.put("/statistics/{stat_id}", response_model=StatisticResponse)
 async def update_statistic(stat_id: int, stat_update: StatisticUpdate, db: Session = Depends(get_db)):
     s = get_statistics(db, stat_id)
@@ -369,3 +414,5 @@ def include_routers(app):
     app.include_router(player_router)
     app.include_router(hero_router)
     app.include_router(match_router)
+    app.include_router(series_router)
+    app.include_router(statistics_router)

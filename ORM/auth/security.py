@@ -60,7 +60,7 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ) -> User:
-    """Отримання поточного користувача з токену"""
+    """Отримання поточного користувача з JWT токену"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Не вдалося перевірити облікові дані",
